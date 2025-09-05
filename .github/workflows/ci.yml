@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -40,51 +40,6 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/**
           if-no-files-found: warn
-
-  pit:
-    name: PIT Mutation Testing
-    needs: unit-tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17 (Temurin)
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Make mvnw executable
-        run: chmod +x mvnw
-
-      # Compila clases y test-classes (sin ejecutar tests)
-      - name: Compile (classes + test-classes)
-        run: ./mvnw -B clean test-compile -DskipTests=true
-
-      # Ejecuta PIT (verbose para ver detalles)
-      - name: Run PIT
-        run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -Dpit.verbose=true
-
-      # Mostrar logs de target
-      - name: Inspect target
-        if: always()
-        run: ls -R target || true
-
-      # Mostrar carpeta PIT (si existe)
-      - name: Inspect PIT reports
-        if: always()
-        run: ls -R target/pit-reports || echo "pit-reports not found"
-
-      # Subir reporte si existe
-      - name: Upload PIT report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pit-report
-          path: target/pit-reports/**
-          if-no-files-found: warn
-  
 
   acceptance:
     name: Karate acceptance tests
@@ -136,3 +91,86 @@ jobs:
           pkill -f 'org.springframework.boot.loader.launch.JarLauncher' || true
           pkill -f 'spring-boot' || true
           pkill -f 'api-meli' || true
+
+  pit:
+    name: PIT Mutation Testing
+    needs: acceptance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Make mvnw executable
+        run: chmod +x mvnw
+
+      # Compila clases y test-classes (sin ejecutar tests)
+      - name: Compile (classes + test-classes)
+        run: ./mvnw -B clean test-compile -DskipTests=true
+
+      # Ejecuta PIT (verbose para ver detalles)
+      - name: Run PIT
+        run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -Dpit.verbose=true
+
+      # Mostrar logs de target
+      - name: Inspect target
+        if: always()
+        run: ls -R target || true
+
+      # Mostrar carpeta PIT (si existe)
+      - name: Inspect PIT reports
+        if: always()
+        run: ls -R target/pit-reports || echo "pit-reports not found"
+
+      # Subir reporte si existe
+      - name: Upload PIT report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pit-report
+          path: target/pit-reports/**
+          if-no-files-found: warn
+
+  performance:
+    name: JMeter Performance Tests
+    needs: pit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download JMeter
+        run: |
+          curl -L https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -o jmeter.tgz
+          tar -xvzf jmeter.tgz
+          mv apache-jmeter-5.6.3 jmeter
+
+      - name: Run JMeter tests
+        run: |
+          ./jmeter/bin/jmeter -n \
+            -t src/test/jmeter/test-plan-performance.jmx \
+            -l target/jmeter-results.jtl \
+            -e -o target/jmeter-report
+
+      - name: Upload JMeter raw results (.jtl)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-results
+          path: target/jmeter-results.jtl
+          if-no-files-found: warn
+
+      - name: Upload JMeter HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-report
+          path: target/jmeter-report/**
+          if-no-files-found: warn
+
+
