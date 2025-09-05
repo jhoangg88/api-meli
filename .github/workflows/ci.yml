@@ -159,6 +159,9 @@ jobs:
           tar -xvzf jmeter.tgz
           mv apache-jmeter-5.6.3 jmeter
 
+      - name: Prepare JMeter report folder
+        run: mkdir -p target/jmeter-report target/jmeter-results || true
+
       - name: Run JMeter tests
         run: |
           ./jmeter/bin/jmeter -n \
