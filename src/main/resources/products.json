@@ -1,0 +1,35 @@
+[
+  {
+    "id": "P001",
+    "name": "Auriculares Bluetooth XYZ",
+      "price": {"currency":"COP","amount":30000,"decimals":0},
+    "sold_quantity":150,
+    "stock": 90,
+    "condition":"new",
+    "pictures":[{"url":"https://.../1.jpg"}],
+    "description":"Auriculares con cancelación de ruido.",
+    "categories":["Electrónica","Audio"]
+  },
+  {
+    "id": "P002",
+    "name": "Mouse Gamer ABC",
+    "price": {"currency":"COP","amount":15000,"decimals":0},
+    "sold_quantity":80,
+    "stock": 300,
+    "condition":"used",
+    "pictures":[{"url":"https://.../m1.jpg"}],
+    "description":"Mouse con sensor óptico",
+    "categories":["Computación","Periféricos"]
+  },
+  {
+    "id": "P003",
+    "name": "Teclado Mecánico RGB XYZ",
+    "price": {"currency":"USD","amount":13,"decimals":5},
+    "sold_quantity":35,
+    "stock": 65,
+    "condition":"new",
+    "pictures":[{"url":"https://.../t1.jpg"}],
+    "description":"teclado con retroiluminación RGB personalizable",
+    "categories":["Computación","Periféricos"]
+  }
+]

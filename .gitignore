@@ -1,0 +1,34 @@
+# Maven / build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# JaCoCo / PIT / Sites
+jacoco.exec
+target/site/
+target/pit-reports/
+target/karate-reports/
+
+# JMeter
+*.jtl
+target/jmeter/
+jmeter-report/
+jmeter-results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (por si acaso)
+node_modules/
