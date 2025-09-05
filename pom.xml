@@ -210,14 +210,15 @@
                 <artifactId>pitest-maven</artifactId>
                 <version>1.17.1</version>
 
-                <!-- Soporte para JUnit 5 -->
+                <!-- Soporte JUnit 5 -->
                 <dependencies>
                     <dependency>
                         <groupId>org.pitest</groupId>
                         <artifactId>pitest-junit5-plugin</artifactId>
                         <version>1.2.1</version>
                     </dependency>
-                    <!-- 🔹 Forzar alineación con JUnit Platform 1.12.2 -->
+
+                    <!-- (Opcional) Fuerza alineación con la plataforma JUnit usada por Spring Boot 3.5.x -->
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-launcher</artifactId>
@@ -231,24 +232,46 @@
                 </dependencies>
 
                 <configuration>
-                    <!-- Target: Solo dominio (model, services, exceptions) -->
+                    <!-- Clases a mutar: solo dominio -->
                     <targetClasses>
                         <param>com.mercadolibre.api_meli.domain.*</param>
                     </targetClasses>
 
-                    <!-- Tests a ejecutar -->
+                    <!-- Tests candidatos (unitarios) -->
                     <targetTests>
                         <param>com.mercadolibre.api_meli.*Test</param>
                     </targetTests>
 
-                    <!-- Exclusiones: no mutar DTOs, controllers ni repositorios -->
+                    <!-- Excluir capas que no aportan valor a mutación -->
                     <excludedClasses>
                         <param>com.mercadolibre.api_meli.infrastructure.controller.*</param>
                         <param>com.mercadolibre.api_meli.infrastructure.controller.dto.*</param>
                         <param>com.mercadolibre.api_meli.infrastructure.repository.*</param>
+                        <param>com.mercadolibre.api_meli.infrastructure.controller.mapper.*</param>
                     </excludedClasses>
+
+                    <!-- Excluir pruebas que no deben participar en PIT -->
+                    <excludedTestClasses>
+                        <param>com.mercadolibre.api_meli.acceptancetest.*</param>
+                        <param>com.mercadolibre.api_meli.ApiMeliApplicationTests</param>
+                    </excludedTestClasses>
+
+                    <!-- Opcional: formatos/reporte -->
+                    <outputFormats>
+                        <param>HTML</param>
+                        <param>XML</param>
+                    </outputFormats>
+
+                    <!-- 🔹 fija la ruta del reporte -->
+                    <reportsDirectory>${project.build.directory}/pit-reports</reportsDirectory>
+
+                    <timestampedReports>false</timestampedReports>
+                    <threads>2</threads>
+                    <mutationThreshold>0</mutationThreshold>
                 </configuration>
+
             </plugin>
+
 
             <!-- ===========================
                  🔹 Resources
