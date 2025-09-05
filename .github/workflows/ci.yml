@@ -26,10 +26,19 @@ jobs:
         run: ./mvnw -B test jacoco:report
 
       - name: Upload JaCoCo HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco/
+          path: target/site/jacoco/**
+          if-no-files-found: warn
+
+      - name: Upload surefire reports (JUnit)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/**
           if-no-files-found: warn
 
   pit:
@@ -38,33 +47,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: maven
+
       - name: Make mvnw executable
         run: chmod +x mvnw
+
+      # Compila clases y *test-classes* (sin ejecutar tests)
+      - name: Compile (classes + test-classes)
+        run: ./mvnw -B -DskipTests=true clean test-compile
+
+      # Ejecuta PIT con la config del POM (verbose para diagnóstico)
       - name: Run PIT
-        run: ./mvnw -B org.pitest:pitest-maven:1.17.1:mutationCoverage
+        run: ./mvnw -B -DskipTests=true -Dpit.verbose=true pitest:mutationCoverage
+
       - name: Upload PIT report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pit-report
-          path: target/pit-reports/
+          path: target/pit-reports/**
           if-no-files-found: warn
 
   acceptance:
     name: Karate acceptance tests
     needs: unit-tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+
+      - name: Set up JDK 17 (Temurin)
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: maven
+
       - name: Make mvnw executable
         run: chmod +x mvnw
 
@@ -74,19 +98,24 @@ jobs:
           echo "Waiting for app to be UP..."
           for i in {1..60}; do
             if curl -fsS http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
-              echo "App is UP"; break
+              echo "App is UP"; exit 0
             fi
             sleep 2
           done
+          echo "App did not start in time"; exit 1
+
+      - name: Verify app is UP
+        run: curl -fsS http://localhost:8080/actuator/health | grep '"status":"UP"'
 
       - name: Run Karate acceptance tests
         run: ./mvnw -B -Pacceptance test
 
       - name: Upload Karate report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: karate-report
-          path: target/karate-reports/
+          path: target/karate-reports/**
           if-no-files-found: warn
 
       - name: Stop app
