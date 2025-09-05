@@ -157,6 +157,3 @@ jobs:
           name: jmeter-report
           path: target/jmeter-report/**
           if-no-files-found: warn
-          if-no-files-found: warn
-
-
