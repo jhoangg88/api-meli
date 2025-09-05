@@ -64,7 +64,7 @@ jobs:
 
       # Ejecuta PIT con la config del POM (verbose para diagnóstico)
       - name: Run PIT
-        run: ./mvnw -B -DskipTests=true -Dpit.verbose=true pitest:mutationCoverage
+        run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -DskipTests=true -Dpit.verbose=true
 
       - name: Upload PIT report
         if: always()
