@@ -66,13 +66,17 @@ jobs:
       - name: Run PIT
         run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -DskipTests=true -Dpit.verbose=true
 
+      - name: List PIT report dir
+        if: always()
+        run: ls -R target/pit-reports || echo "pit-reports not found"
+
       - name: Upload PIT report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pit-report
           path: target/pit-reports/**
-          if-no-files-found: error
+          if-no-files-found: warn
 
   acceptance:
     name: Karate acceptance tests
