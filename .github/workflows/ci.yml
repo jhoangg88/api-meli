@@ -58,32 +58,33 @@ jobs:
       - name: Make mvnw executable
         run: chmod +x mvnw
 
-      # Compila clases y *test-classes* (sin ejecutar tests)
+      # Compila clases y test-classes (sin ejecutar tests)
       - name: Compile (classes + test-classes)
-        run: ./mvnw -B -DskipTests=true clean test-compile
+        run: ./mvnw -B clean test-compile -DskipTests=true
 
-      # Ejecuta PIT con la config del POM (verbose para diagnóstico)
+      # Ejecuta PIT (verbose para ver detalles)
       - name: Run PIT
         run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -DskipTests=true -Dpit.verbose=true
-      
-      - name: Inspect PIT reports
+
+      # Mostrar logs de target
+      - name: Inspect target
         if: always()
         run: ls -R target || true
 
-      - name: List PIT report dir
+      # Mostrar carpeta PIT (si existe)
+      - name: Inspect PIT reports
         if: always()
         run: ls -R target/pit-reports || echo "pit-reports not found"
 
+      # Subir reporte si existe
       - name: Upload PIT report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pit-report
-          path: |
-            target/pit-reports/**
-            target/**/mutation-report.html
-            target/**/index.html
+          path: target/pit-reports/**
           if-no-files-found: warn
+  
 
   acceptance:
     name: Karate acceptance tests
