@@ -203,5 +203,9 @@ jobs:
         run: chmod +x mvnw
 
       - name: Run SonarCloud analysis
-        run: ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io
+        run: ./mvnw -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+             -Dsonar.projectKey=jhoangg88_api-meli \
+             -Dsonar.organization=jhoangg88 \
+             -Dsonar.host.url=https://sonarcloud.io \
+             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
