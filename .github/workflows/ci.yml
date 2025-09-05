@@ -65,6 +65,10 @@ jobs:
       # Ejecuta PIT con la config del POM (verbose para diagnóstico)
       - name: Run PIT
         run: ./mvnw -B org.pitest:pitest-maven:mutationCoverage -DskipTests=true -Dpit.verbose=true
+      
+      - name: Inspect PIT reports
+        if: always()
+        run: ls -R target || true
 
       - name: List PIT report dir
         if: always()
@@ -75,7 +79,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pit-report
-          path: target/pit-reports/**
+          path: |
+            target/pit-reports/**
+            target/**/mutation-report.html
+            target/**/index.html
           if-no-files-found: warn
 
   acceptance:
