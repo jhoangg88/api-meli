@@ -136,24 +136,51 @@ jobs:
           path: target/pit-reports/**
           if-no-files-found: warn
 
+
   performance:
     name: JMeter Performance Tests
-    needs: unit-tests
+    #needs: acceptance
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run JMeter tests
-        uses: QAInsights/PerfAction@v3.1
+      - name: Cache JMeter
+        id: cache-jmeter
+        uses: actions/cache@v3
         with:
-          test-plan-path: src/test/jmeter/test-plan-performance.jmx
-          output-dir: target/jmeter-report
+          path: jmeter
+          key: jmeter-5.6.3
+
+      - name: Download JMeter
+        if: steps.cache-jmeter.outputs.cache-hit != 'true'
+        run: |
+          curl -L https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz -o jmeter.tgz
+          tar -xvzf jmeter.tgz
+          mv apache-jmeter-5.6.3 jmeter
+
+      - name: Run JMeter tests
+        run: |
+          ./jmeter/bin/jmeter -n \
+            -t src/test/jmeter/test-plan-performance.jmx \
+            -l target/jmeter-results.jtl \
+            -e -o target/jmeter-report
+
+      - name: Upload JMeter raw results (.jtl)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-results
+          path: target/jmeter-results.jtl
+          if-no-files-found: warn
 
       - name: Upload JMeter HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
+          name: jmeter-report
+          path: target/jmeter-report/**
+          if-no-files-found: warn
           name: jmeter-report
           path: target/jmeter-report/**
           if-no-files-found: warn
