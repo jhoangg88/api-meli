@@ -72,7 +72,7 @@ jobs:
         with:
           name: pit-report
           path: target/pit-reports/**
-          if-no-files-found: warn
+          if-no-files-found: error
 
   acceptance:
     name: Karate acceptance tests
