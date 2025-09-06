@@ -162,8 +162,11 @@ jobs:
     - name: Prepare JMeter report folder
       run: mkdir -p target/jmeter-report target/jmeter-results || true
 
+    - name: Make mvnw executable
+      run: chmod +x mvnw
+
     - name: Start API in background
-      run: ./mvnw spring-boot:run &
+      run: ./mvnw -q -DskipTests spring-boot:run &
 
     - name: Wait until API is UP
       run: |
@@ -185,6 +188,13 @@ jobs:
           -l target/jmeter-results.jtl \
           -e -o target/jmeter-report
 
+    - name: Stop API
+      if: always()
+      run: |
+        pkill -f 'org.springframework.boot.loader.launch.JarLauncher' || true
+        pkill -f 'spring-boot' || true
+        pkill -f 'api-meli' || true
+
     - name: Upload JMeter raw results (.jtl)
       if: always()
       uses: actions/upload-artifact@v4
@@ -200,6 +210,7 @@ jobs:
         name: jmeter-report
         path: target/jmeter-report/**
         if-no-files-found: warn
+
 
   sonar:
     name: SonarCloud Analysis
