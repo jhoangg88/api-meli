@@ -9,9 +9,11 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
 
+/** Centralizes error management across the application. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** Handles exceptions of type NotFoundException */
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(
@@ -24,6 +26,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    /** Handles any unconsidered generic exceptions */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(

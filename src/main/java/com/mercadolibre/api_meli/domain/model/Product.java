@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-//Main entity that represents a product.
+/** Main entity that represents a product. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

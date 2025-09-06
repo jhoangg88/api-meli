@@ -28,7 +28,7 @@ class PictureTest {
         Picture p3 = new Picture("https://example.com/2.png");
 
         assertThat(p1).isEqualTo(p2);
-        assertThat(p1.hashCode()).isEqualTo(p2.hashCode());
+        assertThat(p1).hasSameHashCodeAs(p2);
 
         assertThat(p1).isNotEqualTo(p3);
         assertThat(p1.hashCode()).isNotEqualTo(p3.hashCode());

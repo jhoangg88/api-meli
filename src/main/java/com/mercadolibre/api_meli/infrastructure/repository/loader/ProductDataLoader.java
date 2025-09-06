@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/** load products from a JSON file.  */
 @Component
 public class ProductDataLoader {
     private final ResourceLoader resourceLoader;
     private final ObjectMapper om;
+
 
     public ProductDataLoader(ResourceLoader resourceLoader, ObjectMapper om) {
         this.resourceLoader = resourceLoader;

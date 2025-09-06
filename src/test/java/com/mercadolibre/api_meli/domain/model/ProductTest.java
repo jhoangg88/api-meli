@@ -69,7 +69,7 @@ class ProductTest {
                 List.of(new Picture("url")), "Pro version", List.of("Electronics"));
 
         assertThat(p1).isEqualTo(p2);
-        assertThat(p1.hashCode()).isEqualTo(p2.hashCode());
+        assertThat(p1).hasSameHashCodeAs(p2);
 
         assertThat(p1).isNotEqualTo(p3);
         assertThat(p1.hashCode()).isNotEqualTo(p3.hashCode());
@@ -83,7 +83,8 @@ class ProductTest {
 
         String toString = product.toString();
 
-        assertThat(toString).contains("P005");
-        assertThat(toString).contains("Smartwatch");
+        assertThat(toString)
+                .contains("P005")
+                .contains("Smartwatch");
     }
 }

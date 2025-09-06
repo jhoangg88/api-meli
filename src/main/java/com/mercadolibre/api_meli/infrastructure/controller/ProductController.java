@@ -19,8 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
+/** Exposes REST API endpoints and delegates business logic to (ProductUseCase) */
 @Slf4j
-@Tag(name = "Product API", description = "API para la gestión de productos")
+@Tag(name = "Product API", description = "API for product management")
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -29,8 +30,8 @@ public class ProductController {
     private final ProductUseCase productUseCase;
     private final ProductMapper productMapper;
 
-    @Operation(summary = "Listar productos")
-    @ApiResponse(responseCode = "200", description = "Lista de productos",
+    @Operation(summary = "List products")
+    @ApiResponse(responseCode = "200", description = "List products",
             content = @Content(schema = @Schema(implementation = ProductResponseDto.class)))
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
@@ -39,10 +40,10 @@ public class ProductController {
         return ResponseEntity.ok(productMapper.toDtoList(products));
     }
 
-    @Operation(summary = "Obtener un producto por ID")
-    @ApiResponse(responseCode = "200", description = "Producto encontrado",
+    @Operation(summary = "Get a product by ID")
+    @ApiResponse(responseCode = "200", description = "Product found",
             content = @Content(schema = @Schema(implementation = ProductResponseDto.class)))
-    @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    @ApiResponse(responseCode = "404", description = "Product not found")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable String id) {
         log.info("*** Request received: GET /api/v1/products/{}", id);

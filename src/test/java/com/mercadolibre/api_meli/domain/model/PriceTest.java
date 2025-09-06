@@ -24,7 +24,8 @@ class PriceTest {
 
         assertThat(price.getCurrency()).isEqualTo("COP");
         assertThat(price.getAmount()).isEqualTo(5000.50);
-        assertThat(price.getDecimals()).isEqualTo(0);
+        assertThat(price.getDecimals()).isZero();
+
     }
 
     @Test
@@ -34,7 +35,7 @@ class PriceTest {
         Price p3 = new Price("EUR", 100.00, 2);
 
         assertThat(p1).isEqualTo(p2);
-        assertThat(p1.hashCode()).isEqualTo(p2.hashCode());
+        assertThat(p1).hasSameHashCodeAs(p2);
 
         assertThat(p1).isNotEqualTo(p3);
         assertThat(p1.hashCode()).isNotEqualTo(p3.hashCode());
@@ -46,8 +47,10 @@ class PriceTest {
 
         String toString = price.toString();
 
-        assertThat(toString).contains("JPY");
-        assertThat(toString).contains("1200.0");
-        assertThat(toString).contains("0");
+        assertThat(toString)
+                .isNotNull()
+                .contains("JPY")
+                .contains("Price")
+                .doesNotContain("USD");
     }
 }

@@ -46,7 +46,7 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Debe retornar un producto cuando existe en el repositorio")
+    @DisplayName("return a product when it exists in the repository")
     void testGetProductById_Found() {
         when(productRepository.findById("P001")).thenReturn(Optional.of(sampleProduct));
 
@@ -61,20 +61,20 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Debe lanzar NotFoundException cuando el producto no existe")
+    @DisplayName("Throw NotFoundException when the product does not exist")
     void testGetProductById_NotFound() {
-        when(productRepository.findById("NO_EXISTE")).thenReturn(Optional.empty());
+        when(productRepository.findById("NO_EXIST")).thenReturn(Optional.empty());
 
         NotFoundException ex = assertThrows(NotFoundException.class,
-                () -> productService.getProductById("NO_EXISTE"));
+                () -> productService.getProductById("NO_EXIST"));
 
-        assertTrue(ex.getMessage().contains("NO_EXISTE"));
-        verify(productRepository).findById("NO_EXISTE");
+        assertTrue(ex.getMessage().contains("NO_EXIST"));
+        verify(productRepository).findById("NO_EXIST");
         verifyNoMoreInteractions(productRepository);
     }
 
     @Test
-    @DisplayName("Debe retornar todos los productos cuando el repositorio tiene datos")
+    @DisplayName("Return all products when the repository has data")
     void testGetAllProducts() {
         when(productRepository.findAll()).thenReturn(List.of(sampleProduct));
 
@@ -88,7 +88,7 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Debe retornar lista vacía cuando el repositorio no tiene productos")
+    @DisplayName("Return empty list when the repository has no products")
     void testGetAllProducts_Empty() {
         when(productRepository.findAll()).thenReturn(List.of());
 

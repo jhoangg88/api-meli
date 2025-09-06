@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//Entity that represents the image of a product.
+/** Entity that represents the image of a product. */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -8,6 +8,8 @@ class ApiMeliApplicationTests {
 
 	@Test
 	void contextLoads() {
+        // Test method intentionally left blank.
+        // Spring Boot context should load without exceptions
 	}
 
 }

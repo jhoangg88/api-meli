@@ -24,13 +24,13 @@ class GlobalExceptionHandlerTest {
     }
 
     @Nested
-    @DisplayName("Pruebas para NotFoundException")
+    @DisplayName("Test for NotFoundException")
     class NotFoundExceptionTests {
 
         @Test
         void testHandleNotFound() {
             // Arrange
-            NotFoundException exception = new NotFoundException("Producto no encontrado");
+            NotFoundException exception = new NotFoundException("Product not found");
             WebRequest request = mock(WebRequest.class);
             when(request.getDescription(false)).thenReturn("uri=/api/products/123");
 
@@ -39,11 +39,11 @@ class GlobalExceptionHandlerTest {
 
             // Assert
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(result.getStatusCodeValue()).isEqualTo(404);
+            assertThat(result.getStatusCode().value()).isEqualTo(404);
 
             ErrorResponse body = result.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.message()).isEqualTo("Producto no encontrado");
+            assertThat(body.message()).isEqualTo("Product not found");
             assertThat(body.status()).isEqualTo(404);
             assertThat(body.error()).isEqualTo("Not Found");
             assertThat(body.path()).isEqualTo("/api/products/123");
@@ -52,13 +52,13 @@ class GlobalExceptionHandlerTest {
     }
 
     @Nested
-    @DisplayName("Pruebas para Exception genérica")
+    @DisplayName("Test for generic exception")
     class GenericExceptionTests {
 
         @Test
         void testHandleGeneric() {
             // Arrange
-            Exception exception = new RuntimeException("Error interno inesperado");
+            Exception exception = new RuntimeException("Unexpected internal error");
             WebRequest request = mock(WebRequest.class);
             when(request.getDescription(false)).thenReturn("uri=/api/products/999");
 
@@ -67,11 +67,11 @@ class GlobalExceptionHandlerTest {
 
             // Assert
             assertThat(result.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-            assertThat(result.getStatusCodeValue()).isEqualTo(500);
+            assertThat(result.getStatusCode().value()).isEqualTo(500);
 
             ErrorResponse body = result.getBody();
             assertThat(body).isNotNull();
-            assertThat(body.message()).isEqualTo("Error interno inesperado");
+            assertThat(body.message()).isEqualTo("Unexpected internal error");
             assertThat(body.status()).isEqualTo(500);
             assertThat(body.error()).isEqualTo("Internal Server Error");
             assertThat(body.path()).isEqualTo("/api/products/999");

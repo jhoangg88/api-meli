@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/** load and manage products from a JSON file. */
 @Repository
 public class JsonProductRepository implements ProductRepository {
     private final List<Product> products;
