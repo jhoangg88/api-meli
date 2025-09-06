@@ -162,6 +162,21 @@ jobs:
       - name: Prepare JMeter report folder
         run: mkdir -p target/jmeter-report target/jmeter-results || true
 
+      - name: Start Spring Boot (no tests)
+        run: |
+          ./mvnw -q -DskipTests spring-boot:run &
+          echo "Waiting for app to be UP..."
+          for i in {1..60}; do
+            if curl -fsS http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+              echo "App is UP"; exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not start in time"; exit 1
+
+      - name: Verify app is UP
+        run: curl -fsS http://localhost:8080/actuator/health | grep '"status":"UP"'
+
       - name: Run JMeter tests
         run: |
           ./jmeter/bin/jmeter -n \
